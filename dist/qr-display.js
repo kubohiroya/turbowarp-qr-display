@@ -61,6 +61,34 @@
   			}
   		},
   		{
+  			"opcode": "showQrCodeWithin",
+  			"blockType": "COMMAND",
+  			"text": "show [TEXT] as QR code with error correction [LEVEL] within [SIZE] stage units",
+  			"description": "Shows the text as a QR code no wider than SIZE stage units, with each module a whole number of units. Keep the sprite at 100% size and at odd x and y so the modules stay sharp; the code can come out smaller than SIZE.",
+  			"arguments": {
+  				"TEXT": {
+  					"type": "STRING",
+  					"defaultValue": "Hello, world!"
+  				},
+  				"LEVEL": {
+  					"type": "STRING",
+  					"defaultValue": "M",
+  					"menu": "errorCorrectionLevels"
+  				},
+  				"SIZE": {
+  					"type": "NUMBER",
+  					"defaultValue": "240"
+  				}
+  			}
+  		},
+  		{
+  			"opcode": "qrCodeSize",
+  			"blockType": "REPORTER",
+  			"text": "QR code size",
+  			"description": "Reports the side of the QR code this sprite is showing, in stage units at 100% size, or 0 when it shows none.",
+  			"arguments": {}
+  		},
+  		{
   			"opcode": "hideQrCode",
   			"blockType": "COMMAND",
   			"text": "hide QR code",
@@ -2533,12 +2561,40 @@
   		isDark: (row, column) => Boolean(qr.modules.get(row, column))
   	};
   }
-  function createQrSvg(text, level = "M") {
+  /**
+  * Lays a symbol out with a whole number of stage units per module.
+  *
+  * TurboWarp sizes an SVG skin by its viewBox and rasterizes it at power-of-two
+  * scales. A code scaled into a fixed size has modules a fraction of a unit
+  * wide, and every rasterization then rounds some modules down and others up:
+  * the grid comes out uneven, and whether a reader decodes it changes with the
+  * size and the screen's pixel ratio. Read back from TurboWarp's stage with
+  * jsQR, a 698-byte profile drawn at 79% of a 320-unit code decoded at some
+  * pixel ratios and not others; drawn at two whole units per module it decoded
+  * at 1, 1.5, 2, 2.5 and 3. The price is size: the side is a multiple of the
+  * module count, so it can come out smaller than the limit.
+  */
+  function layoutQr(symbol, options = {}) {
+  	const maxSize = options.maxSize ?? 320;
+  	if (!Number.isFinite(maxSize) || maxSize <= 0) throw new QrDisplayError("invalid-size", "The QR code size must be a positive number of stage units.");
+  	const modules = symbol.size + 8;
+  	const moduleSize = Math.max(1, Math.floor(maxSize / modules));
+  	return {
+  		moduleSize,
+  		modules,
+  		side: modules * moduleSize
+  	};
+  }
+  function createQrSvg(text, level = "M", options = {}) {
   	const symbol = createQrSymbol(text, level);
-  	const viewSize = symbol.size + 8;
+  	const { moduleSize: unit, side } = layoutQr(symbol, options);
   	const commands = [];
-  	for (let row = 0; row < symbol.size; row += 1) for (let column = 0; column < symbol.size; column += 1) if (symbol.isDark(row, column)) commands.push(`M${column + 4} ${row + 4}h1v1h-1z`);
-  	return `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" shape-rendering="crispEdges"><rect width="320" height="320" fill="#fff"/><g transform="scale(${320 / viewSize})"><path d="${commands.join("")}" fill="#000"/></g></svg>`;
+  	for (let row = 0; row < symbol.size; row += 1) for (let column = 0; column < symbol.size; column += 1) if (symbol.isDark(row, column)) {
+  		const x = (column + 4) * unit;
+  		const y = (row + 4) * unit;
+  		commands.push(`M${x} ${y}h${unit}v${unit}h-${unit}z`);
+  	}
+  	return `<svg xmlns="http://www.w3.org/2000/svg" width="${side}" height="${side}" viewBox="0 0 ${side} ${side}" shape-rendering="crispEdges"><rect width="${side}" height="${side}" fill="#fff"/><path d="${commands.join("")}" fill="#000"/></svg>`;
   }
   //#endregion
   //#region src/sprite-display.ts
@@ -2562,14 +2618,20 @@
   		if (!Number.isInteger(target.drawableID) || Number(target.drawableID) < 0) throw new QrDisplayError("renderer-unavailable", "The sprite has no drawable.");
   		return target;
   	}
-  	show(targetValue, svg) {
+  	/**
+  	* `rotationCenter` is where the sprite's position lands on the SVG. Left to
+  	* the renderer it is the middle, which is half a unit off the grid whenever
+  	* the side is odd -- and a code whose modules are whole units is only sharp
+  	* when its edges are on whole units too.
+  	*/
+  	show(targetValue, svg, rotationCenter) {
   		const target = this.validateTarget(targetValue);
   		const renderer = requireRenderer(this.runtime.renderer);
   		const drawableId = Number(target.drawableID);
   		const current = this.displays.get(target);
   		const originalSkinId = current?.originalSkinId ?? drawableSkinId(renderer, drawableId);
   		if (originalSkinId === void 0) throw new QrDisplayError("renderer-unavailable", "The sprite has no skin to restore.");
-  		const temporarySkinId = renderer.createSVGSkin(svg);
+  		const temporarySkinId = rotationCenter === void 0 ? renderer.createSVGSkin(svg) : renderer.createSVGSkin(svg, rotationCenter);
   		if (!Number.isInteger(temporarySkinId) || temporarySkinId < 0) throw new QrDisplayError("renderer-unavailable", "The renderer could not create a QR skin.");
   		try {
   			renderer.updateDrawableSkinId(drawableId, temporarySkinId);
@@ -2645,6 +2707,7 @@
   var QrDisplayExtension = class {
   	constructor(runtime = Scratch.vm?.runtime ?? {}) {
   		this.lastError = "";
+  		this.sides = /* @__PURE__ */ new WeakMap();
   		this.stopListener = () => this.display.hideAll();
   		this.disposeListener = () => this.dispose();
   		this.targetRemovedListener = (target) => {
@@ -2678,6 +2741,19 @@
   			throw error;
   		}
   	}
+  	showQrCodeWithin(args, util) {
+  		try {
+  			this.show(util?.target, Scratch.Cast.toString(args.TEXT), parseErrorCorrectionLevel(args.LEVEL), { maxSize: Scratch.Cast.toNumber(args.SIZE) });
+  			this.lastError = "";
+  		} catch (error) {
+  			this.lastError = error instanceof QrDisplayError ? error.code : "renderer-unavailable";
+  			throw error;
+  		}
+  	}
+  	qrCodeSize(_args, util) {
+  		const target = util?.target;
+  		return target && this.isShowing(target) ? this.sides.get(target) ?? 0 : 0;
+  	}
   	hideQrCode(_args, util) {
   		this.hide(util?.target);
   	}
@@ -2687,12 +2763,20 @@
   	lastQrCodeError() {
   		return this.lastError;
   	}
-  	createQrSvg(text, level = "M") {
-  		return createQrSvg(text, level);
+  	createQrSvg(text, level = "M", options = {}) {
+  		return createQrSvg(text, level, options);
   	}
-  	show(target, text, level = "M") {
-  		this.display.validateTarget(target);
-  		this.display.show(target, createQrSvg(text, level));
+  	/** The module size and side a text would be drawn at, without drawing it. */
+  	qrLayout(text, level = "M", options = {}) {
+  		return layoutQr(createQrSymbol(text, level), options);
+  	}
+  	show(target, text, level = "M", options = {}) {
+  		const shown = this.display.validateTarget(target);
+  		const svg = createQrSvg(text, level, options);
+  		const { side } = layoutQr(createQrSymbol(text, level), options);
+  		const centre = 2 * Math.floor(side / 4);
+  		this.display.show(shown, svg, [centre, centre]);
+  		this.sides.set(shown, side);
   	}
   	hide(target) {
   		this.display.hide(target);

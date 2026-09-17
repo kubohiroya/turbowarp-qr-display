@@ -12,6 +12,24 @@
       }
     },
     {
+      "opcode": "showQrCodeWithin",
+      "blockType": "COMMAND",
+      "text": "show [TEXT] as QR code with error correction [LEVEL] within [SIZE] stage units",
+      "description": "Shows the text as a QR code no wider than SIZE stage units, with each module a whole number of units. Keep the sprite at 100% size and at odd x and y so the modules stay sharp; the code can come out smaller than SIZE.",
+      "arguments": {
+        "TEXT": {"type": "STRING", "defaultValue": "Hello, world!"},
+        "LEVEL": {"type": "STRING", "defaultValue": "M", "menu": "errorCorrectionLevels"},
+        "SIZE": {"type": "NUMBER", "defaultValue": "240"}
+      }
+    },
+    {
+      "opcode": "qrCodeSize",
+      "blockType": "REPORTER",
+      "text": "QR code size",
+      "description": "Reports the side of the QR code this sprite is showing, in stage units at 100% size, or 0 when it shows none.",
+      "arguments": {}
+    },
+    {
       "opcode": "hideQrCode",
       "blockType": "COMMAND",
       "text": "hide QR code",

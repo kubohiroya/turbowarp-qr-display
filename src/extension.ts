@@ -1,11 +1,18 @@
 import definitions from './block-definitions.json';
 import {extensionConfig} from './config';
 import {QrDisplayError} from './errors.js';
-import {createQrSvg, parseErrorCorrectionLevel, type QrErrorCorrectionLevel} from './qr-svg.js';
+import {
+  createQrSvg,
+  createQrSymbol,
+  layoutQr,
+  parseErrorCorrectionLevel,
+  type QrErrorCorrectionLevel,
+  type QrSvgOptions
+} from './qr-svg.js';
 import {SpriteSkinDisplay} from './sprite-display.js';
 
 type BlockTypeName = 'COMMAND' | 'REPORTER' | 'BOOLEAN';
-type ArgumentTypeName = 'STRING';
+type ArgumentTypeName = 'STRING' | 'NUMBER';
 
 interface DefinitionArgument {
   type: ArgumentTypeName;
@@ -40,6 +47,8 @@ export class QrDisplayExtension implements TurboWarpExtension {
   private readonly runtime: TurboWarpRuntime;
   private readonly display: SpriteSkinDisplay;
   private lastError = '';
+  /** The side of the code each sprite shows, for the size reporter. */
+  private readonly sides = new WeakMap<TurboWarpTarget, number>();
 
   /** The stop sign and the green flag both stop all, which ends every display. */
   private readonly stopListener = (): void => this.display.hideAll();
@@ -84,6 +93,26 @@ export class QrDisplayExtension implements TurboWarpExtension {
     }
   }
 
+  public showQrCodeWithin(
+    args: {TEXT: unknown; LEVEL: unknown; SIZE: unknown},
+    util?: TurboWarpBlockUtility
+  ): void {
+    try {
+      this.show(util?.target, Scratch.Cast.toString(args.TEXT), parseErrorCorrectionLevel(args.LEVEL), {
+        maxSize: Scratch.Cast.toNumber(args.SIZE)
+      });
+      this.lastError = '';
+    } catch (error) {
+      this.lastError = error instanceof QrDisplayError ? error.code : 'renderer-unavailable';
+      throw error;
+    }
+  }
+
+  public qrCodeSize(_args: unknown, util?: TurboWarpBlockUtility): number {
+    const target = util?.target;
+    return target && this.isShowing(target) ? (this.sides.get(target) ?? 0) : 0;
+  }
+
   public hideQrCode(_args: unknown, util?: TurboWarpBlockUtility): void {
     this.hide(util?.target);
   }
@@ -98,13 +127,37 @@ export class QrDisplayExtension implements TurboWarpExtension {
 
   // --- Runtime capability --------------------------------------------------
 
-  public createQrSvg(text: string, level: QrErrorCorrectionLevel = 'M'): string {
-    return createQrSvg(text, level);
+  public createQrSvg(
+    text: string,
+    level: QrErrorCorrectionLevel = 'M',
+    options: QrSvgOptions = {}
+  ): string {
+    return createQrSvg(text, level, options);
   }
 
-  public show(target: TurboWarpTarget | undefined, text: string, level: QrErrorCorrectionLevel = 'M'): void {
-    this.display.validateTarget(target);
-    this.display.show(target, createQrSvg(text, level));
+  /** The module size and side a text would be drawn at, without drawing it. */
+  public qrLayout(text: string, level: QrErrorCorrectionLevel = 'M', options: QrSvgOptions = {}) {
+    return layoutQr(createQrSymbol(text, level), options);
+  }
+
+  public show(
+    target: TurboWarpTarget | undefined,
+    text: string,
+    level: QrErrorCorrectionLevel = 'M',
+    options: QrSvgOptions = {}
+  ): void {
+    const shown = this.display.validateTarget(target);
+    const svg = createQrSvg(text, level, options);
+    const {side} = layoutQr(createQrSymbol(text, level), options);
+    // An even centre, whatever the side, so where the edges land depends
+    // only on where the sprite is. Read back from TurboWarp's stage with jsQR,
+    // codes of 400 to 1100 bytes at two or three units per module decoded at
+    // pixel ratios 1, 1.25, 1.5, 1.75, 2, 2.5 and 3 when the sprite stood on
+    // odd x and y; with the middle as the centre, which half the sizes put on
+    // an odd unit, some decoded at 1.5 and 2.5 and some did not.
+    const centre = 2 * Math.floor(side / 4);
+    this.display.show(shown, svg, [centre, centre]);
+    this.sides.set(shown, side);
   }
 
   public hide(target: TurboWarpTarget | undefined): void {

@@ -18,6 +18,11 @@
       "arguments": []
     },
     {
+      "opcode": "qrCodeSize",
+      "blockType": "REPORTER",
+      "arguments": []
+    },
+    {
       "opcode": "showQrCode",
       "blockType": "COMMAND",
       "arguments": [
@@ -25,6 +30,25 @@
           "id": "LEVEL",
           "type": "STRING",
           "menu": "errorCorrectionLevels"
+        },
+        {
+          "id": "TEXT",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "opcode": "showQrCodeWithin",
+      "blockType": "COMMAND",
+      "arguments": [
+        {
+          "id": "LEVEL",
+          "type": "STRING",
+          "menu": "errorCorrectionLevels"
+        },
+        {
+          "id": "SIZE",
+          "type": "NUMBER"
         },
         {
           "id": "TEXT",

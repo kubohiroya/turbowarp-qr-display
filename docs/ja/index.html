@@ -23,7 +23,8 @@
       <div class="panel"><span class="block">show profile as QR code with error correction H</span><span class="block">hide QR code</span></div>
     </section>
     <section class="section" id="blocks"><h2>ブロック</h2><div class="grid">
-      <article class="card"><h3>show as QR code</h3><p>文字列をUTF-8で、誤り訂正レベルL・M・Q・Hのいずれかで符号化し、幅320（ステージ単位）で表示します。</p></article>
+      <article class="card"><h3>show as QR code</h3><p>文字列をUTF-8で、誤り訂正レベルL・M・Q・Hのいずれかで符号化し、1マスを整数のステージ単位で、最大320または指定した大きさ以内で表示します。</p></article>
+      <article class="card"><h3>QR code size</h3><p>表示中のQRコードの一辺を返します。周りの配置に使えます。</p></article>
       <article class="card"><h3>hide QR code</h3><p>コスチュームを戻します。</p></article>
       <article class="card"><h3>showing QR code?</h3><p>QRコードを表示中かを返します。コスチュームを切り替えると外れます。</p></article>
       <article class="card"><h3>QR code error</h3><p>直前の表示が失敗した理由（text-too-longなど）を返します。成功後は空です。</p></article>
