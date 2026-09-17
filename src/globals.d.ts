@@ -3,7 +3,7 @@ interface TurboWarpExtension {
 }
 
 interface TurboWarpRenderer {
-  createSVGSkin?(svg: string): number;
+  createSVGSkin?(svg: string, rotationCenter?: [number, number]): number;
   destroySkin?(skinId: number): void;
   updateDrawableSkinId?(drawableId: number, skinId: number): void;
   _allDrawables?: Array<{_skin?: {_id?: number}} | undefined>;
@@ -44,6 +44,7 @@ interface ScratchApi {
   ArgumentType: Record<'STRING' | 'NUMBER' | 'BOOLEAN', string>;
   Cast: {
     toString(value: unknown): string;
+    toNumber(value: unknown): number;
   };
   vm?: {runtime?: TurboWarpRuntime};
   translate: ScratchTranslate;

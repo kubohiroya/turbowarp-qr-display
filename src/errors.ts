@@ -8,6 +8,7 @@ export type QrDisplayErrorCode =
   | 'empty-text'
   | 'text-too-long'
   | 'invalid-level'
+  | 'invalid-size'
   | 'invalid-target'
   | 'renderer-unavailable';
 

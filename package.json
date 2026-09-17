@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-qr-display",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Hiroya Kubo <hiroya@cuc.ac.jp>",
   "description": "A TurboWarp extension that shows any text as a QR code on a sprite.",
   "type": "module",

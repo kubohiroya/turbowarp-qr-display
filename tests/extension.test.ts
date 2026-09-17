@@ -4,6 +4,7 @@ import {QrDisplayExtension} from '../src/extension.js';
 type Listener = (...args: unknown[]) => void;
 
 interface Stage {
+  centres: Map<number, [number, number] | undefined>;
   runtime: TurboWarpRuntime;
   sprite: TurboWarpTarget;
   drawableSkins: Map<number, number>;
@@ -19,6 +20,7 @@ function createStage(): Stage {
   const skins = new Map<number, string>();
   const drawableSkins = new Map<number, number>([[DRAWABLE, COSTUME_SKINS[0] as number]]);
   const listeners = new Map<string, Set<Listener>>();
+  const centres = new Map<number, [number, number] | undefined>();
   let nextSkinId = 100;
   const drawables: Array<{_skin?: {_id?: number}} | undefined> = [];
   drawables[DRAWABLE] = {
@@ -27,9 +29,10 @@ function createStage(): Stage {
     }
   };
   const renderer: TurboWarpRenderer = {
-    createSVGSkin: (svg) => {
+    createSVGSkin: (svg, rotationCenter) => {
       const id = nextSkinId++;
       skins.set(id, svg);
+      centres.set(id, rotationCenter);
       return id;
     },
     destroySkin: (id) => {
@@ -64,6 +67,7 @@ function createStage(): Stage {
     sprite,
     drawableSkins,
     skins,
+    centres,
     listeners,
     emit: (event, ...args) => {
       for (const listener of listeners.get(event) ?? []) listener(...args);
@@ -76,7 +80,7 @@ beforeEach(() => {
     extensions: {unsandboxed: true, register: vi.fn()},
     BlockType: {COMMAND: 'command', REPORTER: 'reporter', BOOLEAN: 'Boolean', HAT: 'hat'},
     ArgumentType: {STRING: 'string', NUMBER: 'number', BOOLEAN: 'Boolean'},
-    Cast: {toString: String},
+    Cast: {toString: String, toNumber: Number},
     translate: (value: string) => value
   });
 });
@@ -98,6 +102,8 @@ describe('QrDisplayExtension', () => {
     expect(info.id).toBe('kubohiroyaqrdisplay');
     expect(info.blocks.map((block) => block.opcode)).toEqual([
       'showQrCode',
+      'showQrCodeWithin',
+      'qrCodeSize',
       'hideQrCode',
       'isShowingQrCode',
       'lastQrCodeError'
@@ -121,6 +127,29 @@ describe('QrDisplayExtension', () => {
     expect(stage.drawableSkins.get(DRAWABLE)).toBe(COSTUME_SKINS[0]);
     expect(stage.skins.has(qrSkin)).toBe(false);
     expect(extension.isShowingQrCode({}, util)).toBe(false);
+  });
+
+  it('fits the code within a size and reports the size it came out at', () => {
+    const stage = createStage();
+    const extension = new QrDisplayExtension(stage.runtime);
+    const util = {target: stage.sprite};
+    expect(extension.qrCodeSize({}, util)).toBe(0);
+    const text = JSON.stringify({profile: 'x'.repeat(640)});
+    extension.showQrCodeWithin({TEXT: text, LEVEL: 'L', SIZE: '253'}, util);
+    const layout = extension.qrLayout(text, 'L', {maxSize: 253});
+    expect(extension.qrCodeSize({}, util)).toBe(layout.side);
+    expect(layout.side).toBeLessThanOrEqual(253);
+    const svg = stage.skins.get(stage.drawableSkins.get(DRAWABLE) as number);
+    expect(svg).toContain(`viewBox="0 0 ${layout.side} ${layout.side}"`);
+    // Centred on an even unit whatever the side, so the edges' position
+    // depends only on the sprite's.
+    const centre = stage.centres.get(stage.drawableSkins.get(DRAWABLE) as number);
+    const even = 2 * Math.floor(layout.side / 4);
+    expect(centre).toEqual([even, even]);
+    extension.hideQrCode({}, util);
+    expect(extension.qrCodeSize({}, util)).toBe(0);
+    expect(() => extension.showQrCodeWithin({TEXT: text, LEVEL: 'L', SIZE: '0'}, util)).toThrow();
+    expect(extension.lastQrCodeError()).toBe('invalid-size');
   });
 
   it('replaces one QR with the next without leaking skins', () => {

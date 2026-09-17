@@ -7,7 +7,7 @@ interface DisplayRecord {
 }
 
 interface RequiredRenderer extends TurboWarpRenderer {
-  createSVGSkin(svg: string): number;
+  createSVGSkin(svg: string, rotationCenter?: [number, number]): number;
   destroySkin(skinId: number): void;
   updateDrawableSkinId(drawableId: number, skinId: number): void;
 }
@@ -39,7 +39,17 @@ export class SpriteSkinDisplay {
     return target;
   }
 
-  public show(targetValue: TurboWarpTarget | undefined, svg: string): TurboWarpTarget {
+  /**
+   * `rotationCenter` is where the sprite's position lands on the SVG. Left to
+   * the renderer it is the middle, which is half a unit off the grid whenever
+   * the side is odd -- and a code whose modules are whole units is only sharp
+   * when its edges are on whole units too.
+   */
+  public show(
+    targetValue: TurboWarpTarget | undefined,
+    svg: string,
+    rotationCenter?: [number, number]
+  ): TurboWarpTarget {
     const target = this.validateTarget(targetValue);
     const renderer = requireRenderer(this.runtime.renderer);
     const drawableId = Number(target.drawableID);
@@ -48,7 +58,10 @@ export class SpriteSkinDisplay {
     if (originalSkinId === undefined) {
       throw new QrDisplayError('renderer-unavailable', 'The sprite has no skin to restore.');
     }
-    const temporarySkinId = renderer.createSVGSkin(svg);
+    const temporarySkinId =
+      rotationCenter === undefined
+        ? renderer.createSVGSkin(svg)
+        : renderer.createSVGSkin(svg, rotationCenter);
     if (!Number.isInteger(temporarySkinId) || temporarySkinId < 0) {
       throw new QrDisplayError('renderer-unavailable', 'The renderer could not create a QR skin.');
     }

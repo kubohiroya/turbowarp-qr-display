@@ -3,23 +3,25 @@ import {describe, expect, it} from 'vitest';
 import {
   createQrSvg,
   createQrSymbol,
+  layoutQr,
   parseErrorCorrectionLevel,
   QR_SVG_SIZE,
   QUIET_ZONE_MODULES
 } from '../src/qr-svg.js';
 
 /** Paints the SVG's module path back into pixels, the way a camera would see it. */
-function rasterize(svg: string, scale = 4): {data: Uint8ClampedArray; width: number} {
-  const moduleSize = Number(/scale\(([\d.]+)\)/.exec(svg)?.[1]);
-  const width = Math.round(QR_SVG_SIZE / moduleSize) * scale;
+function rasterize(svg: string, scale = 2): {data: Uint8ClampedArray; width: number} {
+  const side = Number(/viewBox="0 0 (\d+) \d+"/.exec(svg)?.[1]);
+  const width = side * scale;
   const data = new Uint8ClampedArray(width * width * 4).fill(255);
   const path = /<path d="([^"]*)"/.exec(svg)?.[1] ?? '';
-  for (const match of path.matchAll(/M(\d+) (\d+)h1v1h-1z/g)) {
-    const column = Number(match[1]);
-    const row = Number(match[2]);
-    for (let y = 0; y < scale; y += 1) {
-      for (let x = 0; x < scale; x += 1) {
-        const pixel = (row * scale + y) * width + column * scale + x;
+  for (const match of path.matchAll(/M(\d+) (\d+)h(\d+)v\d+h-\d+z/g)) {
+    const left = Number(match[1]) * scale;
+    const top = Number(match[2]) * scale;
+    const size = Number(match[3]) * scale;
+    for (let y = 0; y < size; y += 1) {
+      for (let x = 0; x < size; x += 1) {
+        const pixel = (top + y) * width + left + x;
         data[pixel * 4] = 0;
         data[pixel * 4 + 1] = 0;
         data[pixel * 4 + 2] = 0;
@@ -43,14 +45,49 @@ describe('createQrSvg', () => {
     expect(jsQR(image.data, image.width, image.width)?.data).toBe(text);
   });
 
-  it('sizes the viewBox, which TurboWarp measures, and keeps a quiet zone', () => {
-    const svg = createQrSvg('size', 'L');
-    const symbol = createQrSymbol('size', 'L');
-    const viewSize = symbol.size + QUIET_ZONE_MODULES * 2;
-    expect(svg).toContain(`viewBox="0 0 ${QR_SVG_SIZE} ${QR_SVG_SIZE}"`);
-    expect(svg).toContain(`scale(${QR_SVG_SIZE / viewSize})`);
-    expect(svg).toContain(`M${QUIET_ZONE_MODULES} ${QUIET_ZONE_MODULES}h1v1h-1z`);
-    expect(svg).not.toContain('100%');
+  it('draws every module a whole number of stage units, within the limit', () => {
+    // A module a fraction of a unit wide is rounded differently each time
+    // TurboWarp rasterizes it, and the grid comes out uneven.
+    for (const [text, maxSize] of [
+      ['size', undefined],
+      ['size', 100],
+      [JSON.stringify({profile: 'x'.repeat(640)}), 253],
+      [JSON.stringify({profile: 'x'.repeat(640)}), 90]
+    ] as const) {
+      const symbol = createQrSymbol(text, 'L');
+      const layout = layoutQr(symbol, maxSize === undefined ? {} : {maxSize});
+      expect(Number.isInteger(layout.moduleSize)).toBe(true);
+      expect(layout.moduleSize).toBeGreaterThanOrEqual(1);
+      expect(layout.modules).toBe(symbol.size + QUIET_ZONE_MODULES * 2);
+      expect(layout.side).toBe(layout.modules * layout.moduleSize);
+      const limit = maxSize ?? QR_SVG_SIZE;
+      // Within the limit whenever one unit per module fits at all, and never
+      // a whole module short of it.
+      if (layout.modules <= limit) {
+        expect(layout.side).toBeLessThanOrEqual(limit);
+        expect(layout.side + layout.modules).toBeGreaterThan(limit);
+      } else {
+        expect(layout.moduleSize).toBe(1);
+      }
+      const svg = createQrSvg(text, 'L', maxSize === undefined ? {} : {maxSize});
+      expect(svg).toContain(`viewBox="0 0 ${layout.side} ${layout.side}"`);
+      expect(svg).toContain(`width="${layout.side}" height="${layout.side}"`);
+      expect(svg).not.toContain('transform');
+      expect(svg).not.toContain('100%');
+      expect(svg).toContain(
+        `M${QUIET_ZONE_MODULES * layout.moduleSize} ${QUIET_ZONE_MODULES * layout.moduleSize}h${layout.moduleSize}`
+      );
+      const image = rasterize(svg, 1);
+      expect(jsQR(image.data, image.width, image.width)?.data).toBe(text);
+    }
+  });
+
+  it('refuses a size that is not a positive number', () => {
+    for (const maxSize of [0, -5, Number.NaN]) {
+      expect(() => createQrSvg('x', 'M', {maxSize})).toThrow(
+        expect.objectContaining({code: 'invalid-size'})
+      );
+    }
   });
 
   it('grows the symbol with the error correction level', () => {
