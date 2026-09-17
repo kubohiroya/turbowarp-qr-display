@@ -1,0 +1,143 @@
+import definitions from './block-definitions.json';
+import {extensionConfig} from './config';
+import {QrDisplayError} from './errors.js';
+import {createQrSvg, parseErrorCorrectionLevel, type QrErrorCorrectionLevel} from './qr-svg.js';
+import {SpriteSkinDisplay} from './sprite-display.js';
+
+type BlockTypeName = 'COMMAND' | 'REPORTER' | 'BOOLEAN';
+type ArgumentTypeName = 'STRING';
+
+interface DefinitionArgument {
+  type: ArgumentTypeName;
+  defaultValue: string;
+  menu?: string;
+}
+
+interface BlockDefinition {
+  opcode: string;
+  blockType: BlockTypeName;
+  text: string;
+  description: string;
+  arguments: Record<string, DefinitionArgument>;
+}
+
+interface MenuDefinition {
+  acceptReporters: boolean;
+  items: string[];
+}
+
+const blockDefinitions = definitions.blocks as readonly BlockDefinition[];
+const menuDefinitions = definitions.menus as Record<string, MenuDefinition>;
+
+/**
+ * Block facade and runtime capability.
+ *
+ * Other unsandboxed extensions reach the same display through
+ * `Scratch.vm.runtime.ext_kubohiroyaqrdisplay`, so a QR they show is restored
+ * by the same stop and removal handling as one shown by a block.
+ */
+export class QrDisplayExtension implements TurboWarpExtension {
+  private readonly runtime: TurboWarpRuntime;
+  private readonly display: SpriteSkinDisplay;
+  private lastError = '';
+
+  /** The stop sign and the green flag both stop all, which ends every display. */
+  private readonly stopListener = (): void => this.display.hideAll();
+  private readonly disposeListener = (): void => this.dispose();
+  private readonly targetRemovedListener = (target: unknown): void => {
+    if (typeof target === 'object' && target !== null) this.display.hide(target as TurboWarpTarget);
+  };
+
+  public constructor(runtime: TurboWarpRuntime = Scratch.vm?.runtime ?? {}) {
+    this.runtime = runtime;
+    this.display = new SpriteSkinDisplay(runtime);
+    runtime.on?.('PROJECT_STOP_ALL', this.stopListener);
+    runtime.on?.('PROJECT_LOADED', this.stopListener);
+    runtime.on?.('targetWasRemoved', this.targetRemovedListener);
+    runtime.on?.('RUNTIME_DISPOSED', this.disposeListener);
+    runtime[`ext_${extensionConfig.id}`] = this;
+  }
+
+  public getInfo(): Record<string, unknown> {
+    return {
+      id: extensionConfig.id,
+      name: Scratch.translate(definitions.extensionName),
+      blocks: blockDefinitions.map((block) => this.toScratchBlock(block)),
+      menus: Object.fromEntries(
+        Object.entries(menuDefinitions).map(([id, menu]) => [
+          id,
+          {acceptReporters: menu.acceptReporters, items: menu.items}
+        ])
+      )
+    };
+  }
+
+  // --- Blocks --------------------------------------------------------------
+
+  public showQrCode(args: {TEXT: unknown; LEVEL: unknown}, util?: TurboWarpBlockUtility): void {
+    try {
+      this.show(util?.target, Scratch.Cast.toString(args.TEXT), parseErrorCorrectionLevel(args.LEVEL));
+      this.lastError = '';
+    } catch (error) {
+      this.lastError = error instanceof QrDisplayError ? error.code : 'renderer-unavailable';
+      throw error;
+    }
+  }
+
+  public hideQrCode(_args: unknown, util?: TurboWarpBlockUtility): void {
+    this.hide(util?.target);
+  }
+
+  public isShowingQrCode(_args: unknown, util?: TurboWarpBlockUtility): boolean {
+    return this.isShowing(util?.target);
+  }
+
+  public lastQrCodeError(): string {
+    return this.lastError;
+  }
+
+  // --- Runtime capability --------------------------------------------------
+
+  public createQrSvg(text: string, level: QrErrorCorrectionLevel = 'M'): string {
+    return createQrSvg(text, level);
+  }
+
+  public show(target: TurboWarpTarget | undefined, text: string, level: QrErrorCorrectionLevel = 'M'): void {
+    this.display.validateTarget(target);
+    this.display.show(target, createQrSvg(text, level));
+  }
+
+  public hide(target: TurboWarpTarget | undefined): void {
+    this.display.hide(target);
+  }
+
+  public isShowing(target: TurboWarpTarget | undefined): boolean {
+    return this.display.isShowing(target);
+  }
+
+  public dispose(): void {
+    this.display.hideAll();
+    this.runtime.off?.('PROJECT_STOP_ALL', this.stopListener);
+    this.runtime.off?.('PROJECT_LOADED', this.stopListener);
+    this.runtime.off?.('targetWasRemoved', this.targetRemovedListener);
+    this.runtime.off?.('RUNTIME_DISPOSED', this.disposeListener);
+  }
+
+  private toScratchBlock(block: BlockDefinition): Record<string, unknown> {
+    return {
+      opcode: block.opcode,
+      blockType: Scratch.BlockType[block.blockType],
+      text: Scratch.translate(block.text),
+      arguments: Object.fromEntries(
+        Object.entries(block.arguments).map(([name, argument]) => [
+          name,
+          {
+            type: Scratch.ArgumentType[argument.type],
+            defaultValue: argument.defaultValue,
+            ...(argument.menu === undefined ? {} : {menu: argument.menu})
+          }
+        ])
+      )
+    };
+  }
+}

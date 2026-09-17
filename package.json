@@ -1,0 +1,75 @@
+{
+  "name": "@kubohiroya/turbowarp-qr-display",
+  "version": "0.1.0",
+  "author": "Hiroya Kubo <hiroya@cuc.ac.jp>",
+  "description": "A TurboWarp extension that shows any text as a QR code on a sprite.",
+  "type": "module",
+  "license": "MPL-2.0",
+  "homepage": "https://kubohiroya.github.io/turbowarp-qr-display/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubohiroya/turbowarp-qr-display.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kubohiroya/turbowarp-qr-display/issues"
+  },
+  "exports": {
+    "./qr-display.js": "./dist/qr-display.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "README.ja.md",
+    "LICENSE"
+  ],
+  "unpkg": "./dist/qr-display.js",
+  "jsdelivr": "./dist/qr-display.js",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "packageManager": "pnpm@11.18.0",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "lint": "eslint src tests scripts vite.config.ts",
+    "test": "vitest run",
+    "docs": "node scripts/generate-readme.ts",
+    "docs:check": "pnpm run docs && git diff --exit-code -- README.md",
+    "docs:pages:check": "node scripts/check-pages.ts",
+    "repo:check": "node scripts/check-repo.ts",
+    "pack:check": "npm pack --dry-run --ignore-scripts",
+    "release:check": "pnpm publish --dry-run --access public --no-git-checks",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run docs:check && pnpm run docs:pages:check && pnpm run check:dist && pnpm run repo:check && pnpm run pack:check",
+    "check:dist": "pnpm run build && node scripts/check-dist.ts",
+    "prepack": "pnpm run check"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@kubohiroya/vite-plugin-turbowarp-extension": "0.4.0",
+    "@types/node": "^24.13.3",
+    "@types/qrcode": "1.5.6",
+    "eslint": "^9.39.5",
+    "jsqr": "^1.4.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.66.0",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.10"
+  },
+  "keywords": [
+    "turbowarp",
+    "scratch",
+    "extension",
+    "qr",
+    "qrcode",
+    "display"
+  ]
+}

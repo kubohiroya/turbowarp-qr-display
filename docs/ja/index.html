@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="任意の文字列をQRコードにしてスプライトに表示するQR Display TurboWarp拡張のガイド。">
+  <title>TurboWarp QR Display ガイド</title>
+  <link rel="canonical" href="https://kubohiroya.github.io/turbowarp-qr-display/ja/">
+  <link rel="alternate" hreflang="en" href="https://kubohiroya.github.io/turbowarp-qr-display/">
+  <link rel="alternate" hreflang="ja" href="https://kubohiroya.github.io/turbowarp-qr-display/ja/">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner">
+    <a class="brand" href="./">TurboWarp QR Display</a>
+    <nav class="nav" aria-label="Sections"><a href="#blocks">ブロック</a><a href="#api">API</a><a href="#setup">準備</a></nav>
+    <nav class="lang" aria-label="Language"><a href="../">English</a><a href="./" aria-current="page">日本語</a></nav>
+  </div></header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">TurboWarp QR output</p><h1>文字列をQRコードにしてスプライトに表示する。</h1>
+      <p class="lede">TurboWarp QR Displayは、スプライトのコスチュームを変更せずにQRコードへ置き換えて表示します。隠したとき・止めたとき・スプライトを削除したときに元のコスチュームへ戻ります。</p></div>
+      <div class="panel"><span class="block">show profile as QR code with error correction H</span><span class="block">hide QR code</span></div>
+    </section>
+    <section class="section" id="blocks"><h2>ブロック</h2><div class="grid">
+      <article class="card"><h3>show as QR code</h3><p>文字列をUTF-8で、誤り訂正レベルL・M・Q・Hのいずれかで符号化し、幅320（ステージ単位）で表示します。</p></article>
+      <article class="card"><h3>hide QR code</h3><p>コスチュームを戻します。</p></article>
+      <article class="card"><h3>showing QR code?</h3><p>QRコードを表示中かを返します。コスチュームを切り替えると外れます。</p></article>
+      <article class="card"><h3>QR code error</h3><p>直前の表示が失敗した理由（text-too-longなど）を返します。成功後は空です。</p></article>
+    </div></section>
+    <section class="section" id="api"><h2>API capability</h2><p>unsandboxed拡張は`Scratch.vm.runtime.ext_kubohiroyaqrdisplay`を参照できます。</p>
+<pre><code>qr.show(util.target, text, 'H');
+qr.hide(util.target);
+const svg = qr.createQrSvg(text, 'M');</code></pre>
+    <p>APIで表示したQRコードも、ブロックと同じく停止・読み込み・削除で外れます。</p></section>
+    <section class="section" id="setup"><h2>準備</h2><p class="note">サンドボックスなしで読み込んでください。QRコード1枚にはレベルHで1273バイトまで入ります。文字列はブラウザの外へ出ず、エラーメッセージにも含まれません。</p></section>
+  </main>
+  <footer>Source: <a href="https://github.com/kubohiroya/turbowarp-qr-display">GitHub</a> · TurboWarp TM is not affiliated with this project.</footer>
+</body>
+</html>

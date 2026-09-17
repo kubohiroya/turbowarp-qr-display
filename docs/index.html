@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="QR Display TurboWarp extension guide for showing any text as a QR code on a sprite.">
+  <title>TurboWarp QR Display user guide</title>
+  <link rel="canonical" href="https://kubohiroya.github.io/turbowarp-qr-display/">
+  <link rel="alternate" hreflang="en" href="https://kubohiroya.github.io/turbowarp-qr-display/">
+  <link rel="alternate" hreflang="ja" href="https://kubohiroya.github.io/turbowarp-qr-display/ja/">
+  <link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner">
+    <a class="brand" href="./">TurboWarp QR Display</a>
+    <nav class="nav" aria-label="Sections"><a href="#blocks">Blocks</a><a href="#api">API</a><a href="#setup">Setup</a></nav>
+    <nav class="lang" aria-label="Language"><a href="./" aria-current="page">English</a><a href="./ja/">日本語</a></nav>
+  </div></header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">TurboWarp QR output</p><h1>Show any text as a QR code on a sprite.</h1>
+      <p class="lede">TurboWarp QR Display puts a QR code in place of a sprite's costume without changing it. The costume comes back when the QR code is hidden, the project stops, or the sprite is removed.</p></div>
+      <div class="panel"><span class="block">show profile as QR code with error correction H</span><span class="block">hide QR code</span></div>
+    </section>
+    <section class="section" id="blocks"><h2>Blocks</h2><div class="grid">
+      <article class="card"><h3>show as QR code</h3><p>Encodes the text as UTF-8 at error correction level L, M, Q or H, and shows it 320 stage units wide.</p></article>
+      <article class="card"><h3>hide QR code</h3><p>Puts the sprite's costume back.</p></article>
+      <article class="card"><h3>showing QR code?</h3><p>Reports whether the sprite still shows its QR code. Switching costume takes it off.</p></article>
+      <article class="card"><h3>QR code error</h3><p>Reports why the last show failed, such as text-too-long, or nothing after a success.</p></article>
+    </div></section>
+    <section class="section" id="api"><h2>API capability</h2><p>Unsandboxed extensions can read `Scratch.vm.runtime.ext_kubohiroyaqrdisplay`.</p>
+<pre><code>qr.show(util.target, text, 'H');
+qr.hide(util.target);
+const svg = qr.createQrSvg(text, 'M');</code></pre>
+    <p>A QR code shown through the API ends on the same stop, load and removal events as one shown by a block.</p></section>
+    <section class="section" id="setup"><h2>Setup</h2><p class="note">Load the extension without the sandbox. One QR code holds up to 1273 bytes at level H. The text never leaves the browser, and error messages never contain it.</p></section>
+  </main>
+  <footer>Source: <a href="https://github.com/kubohiroya/turbowarp-qr-display">GitHub</a> · TurboWarp TM is not affiliated with this project.</footer>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "extensionName": "QR Display",
+  "blocks": [
+    {
+      "opcode": "showQrCode",
+      "blockType": "COMMAND",
+      "text": "show [TEXT] as QR code with error correction [LEVEL]",
+      "description": "Shows the text as a QR code in place of this sprite's costume. The costume itself is not changed and comes back when the QR code is hidden or the project stops.",
+      "arguments": {
+        "TEXT": {"type": "STRING", "defaultValue": "Hello, world!"},
+        "LEVEL": {"type": "STRING", "defaultValue": "M", "menu": "errorCorrectionLevels"}
+      }
+    },
+    {
+      "opcode": "hideQrCode",
+      "blockType": "COMMAND",
+      "text": "hide QR code",
+      "description": "Puts this sprite's costume back in place of its QR code.",
+      "arguments": {}
+    },
+    {
+      "opcode": "isShowingQrCode",
+      "blockType": "BOOLEAN",
+      "text": "showing QR code?",
+      "description": "Reports whether this sprite is showing a QR code. Switching costume takes the QR code off.",
+      "arguments": {}
+    },
+    {
+      "opcode": "lastQrCodeError",
+      "blockType": "REPORTER",
+      "text": "QR code error",
+      "description": "Reports why the last show block of this extension failed, such as text-too-long, or nothing when it succeeded.",
+      "arguments": {}
+    }
+  ],
+  "menus": {
+    "errorCorrectionLevels": {
+      "acceptReporters": true,
+      "items": ["L", "M", "Q", "H"]
+    }
+  }
+}
