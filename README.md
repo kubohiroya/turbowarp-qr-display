@@ -183,7 +183,7 @@ Extension config + block definitions
 - `src/sprite-display.ts`: swaps a sprite's skin and restores its costume
 - `src/extension.ts`: blocks and runtime capability
 - `src/index.ts`: extension registration entry point
-- `schemas/extension-manifest.schema.json`: JSON Schema for the generated API contract
+- the manifest generator and its JSON Schema come from [`@kubohiroya/turbowarp-extension-manifest`](https://github.com/kubohiroya/turbowarp-extension-manifest)
 - `tests/`: unit tests, including a decode of every generated SVG with jsQR
 - `dist/`: tracked TurboWarp JavaScript and extension API manifest
 
