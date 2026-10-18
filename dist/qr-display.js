@@ -2724,6 +2724,7 @@
   	getInfo() {
   		return {
   			id: extensionConfig.id,
+  			docsURI: "https://kubohiroya.github.io/turbowarp-qr-display/",
   			name: Scratch.translate(block_definitions_default.extensionName),
   			blocks: blockDefinitions.map((block) => this.toScratchBlock(block)),
   			menus: Object.fromEntries(Object.entries(menuDefinitions).map(([id, menu]) => [id, {

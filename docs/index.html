@@ -9,6 +9,15 @@
   <link rel="alternate" hreflang="en" href="https://kubohiroya.github.io/turbowarp-qr-display/">
   <link rel="alternate" hreflang="ja" href="https://kubohiroya.github.io/turbowarp-qr-display/ja/">
   <link rel="stylesheet" href="./assets/site.css">
+<style id="block-reference-style">
+#extension-block-reference{max-width:72rem;margin:2rem auto;padding:1rem;line-height:1.6;overflow-wrap:anywhere}
+#extension-block-reference .block-reference-entry{display:block;scroll-margin-top:6rem;margin:2rem 0;padding:1rem;border:1px solid currentColor;border-radius:.5rem}
+#extension-block-reference .block-reference-table{overflow-x:auto}
+#extension-block-reference table{border-collapse:collapse;width:100%}
+#extension-block-reference th,#extension-block-reference td{text-align:left;vertical-align:top;border:1px solid currentColor;padding:.5rem}
+#extension-block-reference code{white-space:pre-wrap}
+#extension-block-reference a:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body>
   <header class="topbar"><div class="topbar-inner">
@@ -16,7 +25,7 @@
     <nav class="nav" aria-label="Sections"><a href="#blocks">Blocks</a><a href="#api">API</a><a href="#setup">Setup</a></nav>
     <nav class="lang" aria-label="Language"><a href="./" aria-current="page">English</a><a href="./ja/">日本語</a></nav>
   </div></header>
-  <main>
+  <main><p lang="en" class="complete-block-reference-link"><a href="#extension-block-reference">Complete block reference (6 blocks)</a></p>
     <section class="hero">
       <div><p class="eyebrow">TurboWarp QR output</p><h1>Show any text as a QR code on a sprite.</h1>
       <p class="lede">TurboWarp QR Display puts a QR code in place of a sprite's costume without changing it. The costume comes back when the QR code is hidden, the project stops, or the sprite is removed.</p></div>
@@ -37,5 +46,20 @@ const svg = qr.createQrSvg(text, 'M');</code></pre>
     <section class="section" id="setup"><h2>Setup</h2><p class="note">Load the extension without the sandbox. One QR code holds up to 1273 bytes at level H. The text never leaves the browser, and error messages never contain it.</p></section>
   </main>
   <footer>Source: <a href="https://github.com/kubohiroya/turbowarp-qr-display">GitHub</a> · TurboWarp TM is not affiliated with this project.</footer>
+<!-- BEGIN COMPLETE BLOCK REFERENCE -->
+<section lang="en" id="extension-block-reference" aria-labelledby="block-reference-title">
+<h2 id="block-reference-title">QR Display: complete block reference</h2>
+<p>All 6 blocks are documented below, including compatibility blocks and blocks available through optional features. Select a block to read its behavior, arguments, default values, and menu choices. Each block has a permanent link.</p>
+<nav aria-label="Block reference"><ul><li><a href="#block-showQrCode"><code>show [TEXT] as QR code with error correction [LEVEL]</code></a></li>
+<li><a href="#block-showQrCodeWithin"><code>show [TEXT] as QR code with error correction [LEVEL] within [SIZE] stage units</code></a></li>
+<li><a href="#block-qrCodeSize"><code>QR code size</code></a></li>
+<li><a href="#block-hideQrCode"><code>hide QR code</code></a></li>
+<li><a href="#block-isShowingQrCode"><code>showing QR code?</code></a></li>
+<li><a href="#block-lastQrCodeError"><code>QR code error</code></a></li>
+</ul></nav>
+<article id="block-showQrCode" class="block-reference-entry"><h3><code>show [TEXT] as QR code with error correction [LEVEL]</code></h3><p>Shows the text as a QR code in place of this sprite&#x27;s costume. The costume itself is not changed and comes back when the QR code is hidden or the project stops.</p><p>Block type: COMMAND. Opcode: <code>showQrCode</code>. <a href="#block-showQrCode">Permanent link</a></p><div class="block-reference-table"><table><thead><tr><th>Argument</th><th>Type</th><th>Default value</th><th>Menu choices</th></tr></thead><tbody><tr><th scope="row"><code>TEXT</code></th><td>STRING</td><td><code>Hello, world!</code></td><td></td></tr><tr><th scope="row"><code>LEVEL</code></th><td>STRING</td><td><code>M</code></td><td><ul><li><code>L</code></li><li><code>M</code></li><li><code>Q</code></li><li><code>H</code></li></ul></td></tr></tbody></table></div></article><article id="block-showQrCodeWithin" class="block-reference-entry"><h3><code>show [TEXT] as QR code with error correction [LEVEL] within [SIZE] stage units</code></h3><p>Shows the text as a QR code no wider than SIZE stage units, with each module a whole number of units. Keep the sprite at 100% size and at odd x and y so the modules stay sharp; the code can come out smaller than SIZE.</p><p>Block type: COMMAND. Opcode: <code>showQrCodeWithin</code>. <a href="#block-showQrCodeWithin">Permanent link</a></p><div class="block-reference-table"><table><thead><tr><th>Argument</th><th>Type</th><th>Default value</th><th>Menu choices</th></tr></thead><tbody><tr><th scope="row"><code>TEXT</code></th><td>STRING</td><td><code>Hello, world!</code></td><td></td></tr><tr><th scope="row"><code>LEVEL</code></th><td>STRING</td><td><code>M</code></td><td><ul><li><code>L</code></li><li><code>M</code></li><li><code>Q</code></li><li><code>H</code></li></ul></td></tr><tr><th scope="row"><code>SIZE</code></th><td>NUMBER</td><td><code>240</code></td><td></td></tr></tbody></table></div></article><article id="block-qrCodeSize" class="block-reference-entry"><h3><code>QR code size</code></h3><p>Reports the side of the QR code this sprite is showing, in stage units at 100% size, or 0 when it shows none.</p><p>Block type: REPORTER. Opcode: <code>qrCodeSize</code>. <a href="#block-qrCodeSize">Permanent link</a></p><p>This block has no arguments.</p></article><article id="block-hideQrCode" class="block-reference-entry"><h3><code>hide QR code</code></h3><p>Puts this sprite&#x27;s costume back in place of its QR code.</p><p>Block type: COMMAND. Opcode: <code>hideQrCode</code>. <a href="#block-hideQrCode">Permanent link</a></p><p>This block has no arguments.</p></article><article id="block-isShowingQrCode" class="block-reference-entry"><h3><code>showing QR code?</code></h3><p>Reports whether this sprite is showing a QR code. Switching costume takes the QR code off.</p><p>Block type: BOOLEAN. Opcode: <code>isShowingQrCode</code>. <a href="#block-isShowingQrCode">Permanent link</a></p><p>This block has no arguments.</p></article><article id="block-lastQrCodeError" class="block-reference-entry"><h3><code>QR code error</code></h3><p>Reports why the last show block of this extension failed, such as text-too-long, or nothing when it succeeded.</p><p>Block type: REPORTER. Opcode: <code>lastQrCodeError</code>. <a href="#block-lastQrCodeError">Permanent link</a></p><p>This block has no arguments.</p></article>
+<p><a href="https://github.com/kubohiroya/turbowarp-qr-display/blob/main/README.md">Repository guide and examples</a></p>
+</section>
+<!-- END COMPLETE BLOCK REFERENCE -->
 </body>
 </html>
