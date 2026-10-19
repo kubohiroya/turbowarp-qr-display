@@ -37,5 +37,6 @@ const svg = qr.createQrSvg(text, 'M');</code></pre>
     <section class="section" id="setup"><h2>準備</h2><p class="note">サンドボックスなしで読み込んでください。QRコード1枚にはレベルHで1273バイトまで入ります。文字列はブラウザの外へ出ず、エラーメッセージにも含まれません。</p></section>
   </main>
   <footer>Source: <a href="https://github.com/kubohiroya/turbowarp-qr-display">GitHub</a> · TurboWarp TM is not affiliated with this project.</footer>
+<section id="fixed-input-editors"><h2>固定入力の編集</h2><p>LEVELはL/M/Q/Hの固定選択で、旧trim・小文字aliasを表示だけで正規化する。SIZEの新値は有限かつ正数であり、小数も許容する。保存時にQR生成・skin登録・描画・session起動は行わず、既存runtimeのmodule幅floorを変更しない。</p><ul></ul><p><a href="../fixed-input-editors.ja.md">固定入力の契約・保持規則・切戻し</a></p></section>
 </body>
 </html>

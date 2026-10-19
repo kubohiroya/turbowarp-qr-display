@@ -1,3 +1,4 @@
+import {fixedInputRegistration} from './fixed-input-editors.js';
 import definitions from './block-definitions.json';
 import {extensionConfig} from './config';
 import {QrDisplayError} from './errors.js';
@@ -67,12 +68,16 @@ export class QrDisplayExtension implements TurboWarpExtension {
     runtime[`ext_${extensionConfig.id}`] = this;
   }
 
+  private readonly fixedEditors = fixedInputRegistration(typeof Scratch === 'undefined' ? undefined : Scratch);
+
   public getInfo(): Record<string, unknown> {
+    const blocks = blockDefinitions.map((block) => this.toScratchBlock(block));
+    this.fixedEditors.ensure(blocks.map(block => `${extensionConfig.id}_${block.opcode}`));
     return {
       id: extensionConfig.id,
       docsURI: 'https://kubohiroya.github.io/turbowarp-qr-display/',
       name: Scratch.translate(definitions.extensionName),
-      blocks: blockDefinitions.map((block) => this.toScratchBlock(block)),
+      blocks,
       menus: Object.fromEntries(
         Object.entries(menuDefinitions).map(([id, menu]) => [
           id,
@@ -170,6 +175,7 @@ export class QrDisplayExtension implements TurboWarpExtension {
   }
 
   public dispose(): void {
+    this.fixedEditors.dispose();
     this.display.hideAll();
     this.runtime.off?.('PROJECT_STOP_ALL', this.stopListener);
     this.runtime.off?.('PROJECT_LOADED', this.stopListener);
