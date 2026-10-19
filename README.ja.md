@@ -27,13 +27,13 @@ QRによる受け渡しの「表示する側」です。読み取る側は、別
 ## インストール
 
 ```text
-https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.2.0/dist/qr-display.js
+https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.2.1/dist/qr-display.js
 ```
 
 npm hostでは次を使います。
 
 ```bash
-pnpm add @kubohiroya/turbowarp-qr-display@0.2.0
+pnpm add @kubohiroya/turbowarp-qr-display@0.2.1
 ```
 
 ## Quick start

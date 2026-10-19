@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-qr-display",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Hiroya Kubo <hiroya@cuc.ac.jp>",
   "description": "A TurboWarp extension that shows any text as a QR code on a sprite.",
   "type": "module",
@@ -56,8 +56,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "@kubohiroya/turbowarp-extension-manifest": "0.2.0",
-    "@kubohiroya/vite-plugin-turbowarp-extension": "0.4.0",
+    "@kubohiroya/turbowarp-extension-manifest": "0.3.2",
+    "@kubohiroya/vite-plugin-turbowarp-extension": "0.6.1",
     "@types/node": "^24.13.3",
     "@types/qrcode": "1.5.6",
     "eslint": "^9.39.5",
@@ -66,7 +66,7 @@
     "typescript-eslint": "^8.66.0",
     "vite": "^8.2.2",
     "vitest": "^4.1.10",
-    "@kubohiroya/turbowarp-extension-data-editor": "git+https://github.com/kubohiroya/turbowarp-extension-data-editor.git#485f0e550e622235624b5e9176820161aeeba252"
+    "@kubohiroya/turbowarp-extension-data-editor": "0.2.1"
   },
   "keywords": [
     "turbowarp",
@@ -75,5 +75,11 @@
     "qr",
     "qrcode",
     "display"
-  ]
+  ],
+  "gitHead": "2ae07a200a00dd0ae6e36fe3b1d7f1121628d941",
+  "x-turbowarp-source": {
+    "revision": "2ae07a200a00dd0ae6e36fe3b1d7f1121628d941",
+    "revisionRole": "base-commit",
+    "sourceState": "local-release-overlay"
+  }
 }

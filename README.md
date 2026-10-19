@@ -32,13 +32,13 @@ camera, for example with `@kubohiroya/turbowarp-jsqr`.
 ## Installation
 
 ```text
-https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.2.0/dist/qr-display.js
+https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.2.1/dist/qr-display.js
 ```
 
 For npm hosts:
 
 ```bash
-pnpm add @kubohiroya/turbowarp-qr-display@0.2.0
+pnpm add @kubohiroya/turbowarp-qr-display@0.2.1
 ```
 
 ## Quick Start

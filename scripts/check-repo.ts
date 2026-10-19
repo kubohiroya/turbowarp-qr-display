@@ -165,7 +165,7 @@ requireText(englishPage, "TurboWarp TM", "docs/index.html");
 requireText(japanesePage, "TurboWarp TM", "docs/ja/index.html");
 
 const cdnUrl =
-  "https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.2.0/dist/qr-display.js";
+  "https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.2.1/dist/qr-display.js";
 requireText(readme, cdnUrl, "README.md");
 requireText(japaneseReadme, cdnUrl, "README.ja.md");
 
