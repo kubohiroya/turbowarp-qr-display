@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kubohiroya.github.io/turbowarp-qr-display/schemas/block-editor-fixed-inputs.schema.json",
+  "title": "turbowarp-qr-display fixed input registration schema",
+  "$defs": {
+    "showQrCode": {
+      "type": "object",
+      "properties": {
+        "LEVEL": {
+          "type": "string",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ]
+        }
+      }
+    },
+    "showQrCodeWithin": {
+      "type": "object",
+      "properties": {
+        "LEVEL": {
+          "type": "string",
+          "enum": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ]
+        },
+        "SIZE": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "$comment": "New finite numeric input uses NP-finite-new-input-v1. Existing raw is preserved on no-op; runtime clamp/floor is not applied to stored raw."
+        }
+      }
+    }
+  }
+}
