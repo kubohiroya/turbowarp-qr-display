@@ -2,7 +2,7 @@
 
 <img src="assets/block-icon.svg" alt="" width="48" height="48">
 
-**English** | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 TurboWarp QR Display shows any text as a QR code on a sprite. The QR code takes
 the place of the sprite's costume without changing it, and the costume comes back
