@@ -76,6 +76,7 @@ export class QrDisplayExtension implements TurboWarpExtension {
     return {
       id: extensionConfig.id,
       docsURI: 'https://kubohiroya.github.io/turbowarp-qr-display/',
+      blockIconURI: extensionConfig.blockIconURI,
       name: Scratch.translate(definitions.extensionName),
       blocks,
       menus: Object.fromEntries(
