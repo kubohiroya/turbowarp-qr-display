@@ -151,8 +151,8 @@ requireText(readme, "# TurboWarp QR Display", "README.md");
 requireText(japaneseReadme, "# TurboWarp QR Display", "README.ja.md");
 requireText(englishPage, "TurboWarp QR Display", "docs/index.html");
 requireText(japanesePage, "TurboWarp QR Display", "docs/ja/index.html");
-requireText(readme, "**English** | [日本語](README.ja.md)", "README.md");
-requireText(japaneseReadme, "[English](README.md) | **日本語**", "README.ja.md");
+requireText(readme, "English | [日本語](README.ja.md)", "README.md");
+requireText(japaneseReadme, "[English](README.md) | 日本語", "README.ja.md");
 requireText(readme, "SPDX-License-Identifier: MPL-2.0", "README.md");
 requireText(
   japaneseReadme,
