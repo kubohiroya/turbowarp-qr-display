@@ -1,5 +1,7 @@
 # TurboWarp QR Display
 
+<img src="assets/block-icon.svg" alt="" width="48" height="48">
+
 [English](README.md) | **日本語**
 
 TurboWarp QR Displayは、任意の文字列をQRコードにしてスプライトに表示するTurboWarp拡張です。QRコードはスプライトのコスチュームを変更せずに置き換えて表示し、隠したとき・プロジェクトを止めたとき・スプライトを削除したときに元のコスチュームへ戻ります。表示内容はプロジェクトに保存されません。
