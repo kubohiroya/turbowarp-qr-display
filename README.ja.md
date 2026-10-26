@@ -88,6 +88,7 @@ TurboWarp TM is not affiliated with this project.
 ## 開発
 
 ```bash
+npm install --global corepack@latest
 corepack enable
 pnpm install --frozen-lockfile
 pnpm run check
