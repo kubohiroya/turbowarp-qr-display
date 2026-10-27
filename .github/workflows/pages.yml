@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths:
       - docs/**
+      - samples/**
+      - dist/**
+      - src/block-definitions.json
+      - scripts/build-samples.mjs
+      - scripts/prepare-pages.mjs
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -25,10 +30,15 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Verify samples and prepare site
+        run: node scripts/prepare-pages.mjs
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: docs
+          path: _site
 
   deploy:
     environment:

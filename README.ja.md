@@ -11,6 +11,15 @@ QRによる受け渡しの「表示する側」です。読み取る側は、別
 **[English guide](https://kubohiroya.github.io/turbowarp-qr-display/)** ·
 **[日本語ガイド](https://kubohiroya.github.io/turbowarp-qr-display/ja/)**
 
+## 実行できるサンプル
+
+[**TurboWarp Editorでデモを開く**](https://turbowarp.org/editor?project_url=https%3A%2F%2Fkubohiroya.github.io%2Fturbowarp-qr-display%2Fsamples%2Fshow-and-hide-qr.sb3) · [SB3をダウンロード](https://kubohiroya.github.io/turbowarp-qr-display/samples/show-and-hide-qr.sb3)
+
+**Run without sandbox**を選んで**Allow**し、緑の旗を押します。
+`showQrCodeWithin`で固定文字列のQRを表示し、`qrCodeSize`・`isShowingQrCode`を確認、キーで消す。サンプルの元データと期待結果は[`samples/README.md`](samples/README.md)に記載しています。
+
+`pnpm run samples:build`でSB3を再生成し、`pnpm run samples:check`で更新漏れと生成処理を確認します。
+
 ## できること
 
 - 文字列をUTF-8で符号化します。日本語もそのまま読み戻せます。

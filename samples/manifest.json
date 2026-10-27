@@ -1,0 +1,25 @@
+{
+  "baseURL": "https://kubohiroya.github.io/turbowarp-qr-display/",
+  "extension": {
+    "id": "kubohiroyaqrdisplay",
+    "bundle": "dist/qr-display.js",
+    "unsandboxed": true
+  },
+  "samples": [
+    {
+      "name": "show-and-hide-qr",
+      "title": "Qr Display minimal demo",
+      "checks": [
+        {
+          "variable": "visible",
+          "equals": true
+        },
+        {
+          "variable": "width",
+          "greaterThan": 0
+        }
+      ],
+      "instructions": "A QR for Hello, TurboWarp! appears. Space restores the sprite."
+    }
+  ]
+}
