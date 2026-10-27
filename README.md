@@ -15,6 +15,16 @@ camera, for example with `@kubohiroya/turbowarp-jsqr`.
 **[Open the user guide](https://kubohiroya.github.io/turbowarp-qr-display/)** ·
 **[日本語ガイド](https://kubohiroya.github.io/turbowarp-qr-display/ja/)**
 
+## Runnable sample
+
+[**Open the demo in TurboWarp Editor**](https://turbowarp.org/editor?project_url=https%3A%2F%2Fkubohiroya.github.io%2Fturbowarp-qr-display%2Fsamples%2Fshow-and-hide-qr.sb3) · [Download the SB3](https://kubohiroya.github.io/turbowarp-qr-display/samples/show-and-hide-qr.sb3)
+
+Select **Run without sandbox**, then **Allow**, and click the green flag.
+A QR for Hello, TurboWarp! appears. Space restores the sprite.
+
+Editable sources and expected results: [`samples/README.md`](samples/README.md).
+Run `pnpm run samples:build` after source/bundle changes and `pnpm run samples:check` before committing.
+
 ## What it does
 
 - Encodes text as UTF-8, so Japanese and other non-ASCII text reads back unchanged.

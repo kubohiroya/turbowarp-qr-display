@@ -1,0 +1,371 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "sample-state": [
+          "Sample state",
+          ""
+        ],
+        "visible": [
+          "QR visible",
+          ""
+        ],
+        "width": [
+          "QR width",
+          ""
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "",
+          "name": "Instructions",
+          "bitmapResolution": 1,
+          "md5ext": "backdrop.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "off",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Demo",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "b1": {
+          "opcode": "event_whenflagclicked",
+          "parent": null,
+          "next": "b2",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 35,
+          "y": 35
+        },
+        "b2": {
+          "opcode": "data_setvariableto",
+          "parent": "b1",
+          "next": "b3",
+          "inputs": {
+            "VALUE": [
+              1,
+              [
+                10,
+                "Running"
+              ]
+            ]
+          },
+          "fields": {
+            "VARIABLE": [
+              "Sample state",
+              "sample-state"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b3": {
+          "opcode": "kubohiroyaqrdisplay_showQrCodeWithin",
+          "parent": "b2",
+          "next": "b5",
+          "inputs": {
+            "TEXT": [
+              1,
+              [
+                10,
+                "Hello, TurboWarp!"
+              ]
+            ],
+            "LEVEL": [
+              1,
+              "b4"
+            ],
+            "SIZE": [
+              1,
+              [
+                4,
+                "180"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b4": {
+          "opcode": "kubohiroyaqrdisplay_menu_errorCorrectionLevels",
+          "parent": "b3",
+          "next": null,
+          "inputs": {},
+          "fields": {
+            "errorCorrectionLevels": [
+              "M",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "b5": {
+          "opcode": "data_setvariableto",
+          "parent": "b3",
+          "next": "b7",
+          "inputs": {
+            "VALUE": [
+              3,
+              "b6",
+              [
+                10,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "VARIABLE": [
+              "QR visible",
+              "visible"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b6": {
+          "opcode": "kubohiroyaqrdisplay_isShowingQrCode",
+          "parent": "b5",
+          "next": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b7": {
+          "opcode": "data_setvariableto",
+          "parent": "b5",
+          "next": "b9",
+          "inputs": {
+            "VALUE": [
+              3,
+              "b8",
+              [
+                10,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "VARIABLE": [
+              "QR width",
+              "width"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b8": {
+          "opcode": "kubohiroyaqrdisplay_qrCodeSize",
+          "parent": "b7",
+          "next": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b9": {
+          "opcode": "data_setvariableto",
+          "parent": "b7",
+          "next": null,
+          "inputs": {
+            "VALUE": [
+              1,
+              [
+                10,
+                "Ready"
+              ]
+            ]
+          },
+          "fields": {
+            "VARIABLE": [
+              "Sample state",
+              "sample-state"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b10": {
+          "opcode": "event_whenkeypressed",
+          "parent": null,
+          "next": "b11",
+          "inputs": {},
+          "fields": {
+            "KEY_OPTION": [
+              "space",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 520,
+          "y": 35
+        },
+        "b11": {
+          "opcode": "kubohiroyaqrdisplay_hideQrCode",
+          "parent": "b10",
+          "next": "b12",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b12": {
+          "opcode": "data_setvariableto",
+          "parent": "b11",
+          "next": "b14",
+          "inputs": {
+            "VALUE": [
+              3,
+              "b13",
+              [
+                10,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "VARIABLE": [
+              "QR visible",
+              "visible"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b13": {
+          "opcode": "kubohiroyaqrdisplay_isShowingQrCode",
+          "parent": "b12",
+          "next": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "b14": {
+          "opcode": "data_setvariableto",
+          "parent": "b12",
+          "next": null,
+          "inputs": {
+            "VALUE": [
+              3,
+              "b15",
+              [
+                10,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "VARIABLE": [
+              "QR width",
+              "width"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "b15": {
+          "opcode": "kubohiroyaqrdisplay_qrCodeSize",
+          "parent": "b14",
+          "next": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "",
+          "name": "Demo",
+          "bitmapResolution": 1,
+          "md5ext": "sprite.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 16,
+          "rotationCenterY": 16
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 75,
+      "y": -15,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [
+    {
+      "id": "visible",
+      "mode": "default",
+      "opcode": "data_variable",
+      "params": {
+        "VARIABLE": "QR visible"
+      },
+      "spriteName": null,
+      "value": "",
+      "width": 0,
+      "height": 0,
+      "x": 18,
+      "y": 115,
+      "visible": true,
+      "sliderMin": 0,
+      "sliderMax": 100,
+      "isDiscrete": true
+    },
+    {
+      "id": "width",
+      "mode": "default",
+      "opcode": "data_variable",
+      "params": {
+        "VARIABLE": "QR width"
+      },
+      "spriteName": null,
+      "value": "",
+      "width": 0,
+      "height": 0,
+      "x": 18,
+      "y": 148,
+      "visible": true,
+      "sliderMin": 0,
+      "sliderMax": 100,
+      "isDiscrete": true
+    }
+  ],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0",
+    "agent": "TurboWarp Plus minimal samples"
+  }
+}
