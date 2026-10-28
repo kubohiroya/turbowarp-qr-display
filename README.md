@@ -44,13 +44,13 @@ Run `pnpm run samples:build` after source/bundle changes and `pnpm run samples:c
 ## Installation
 
 ```text
-https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.4.0/dist/qr-display.js
+https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.5.0/dist/qr-display.js
 ```
 
 For npm hosts:
 
 ```bash
-pnpm add @kubohiroya/turbowarp-qr-display@0.4.0
+pnpm add @kubohiroya/turbowarp-qr-display@0.5.0
 ```
 
 ## Quick Start
