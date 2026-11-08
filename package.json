@@ -51,6 +51,7 @@
     "docs:pages:check": "node scripts/check-pages.ts",
     "repo:check": "node scripts/check-repo.ts",
     "pack:check": "npm pack --dry-run --ignore-scripts",
+    "release:prepare": "node scripts/prepare-release.ts && pnpm run build && pnpm run samples:build",
     "release:check": "pnpm publish --dry-run --access public --no-git-checks",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run docs:check && pnpm run docs:pages:check && pnpm run check:dist && pnpm run repo:check && pnpm run pack:check && pnpm run samples:check",
     "check:dist": "pnpm run build && node scripts/check-dist.ts",

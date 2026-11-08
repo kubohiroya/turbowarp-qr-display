@@ -115,8 +115,8 @@ if (policy.profile !== "capability-extension") {
 if (policy.packageName !== manifest.name) {
   throw new Error("repo-policy.json packageName must match package.json name.");
 }
-if (manifest.version !== "0.5.0") {
-  throw new Error("package.json version must be 0.5.0.");
+if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u.test(manifest.version)) {
+  throw new Error("package.json version must be a semantic version.");
 }
 if (manifest.license !== policy.license) {
   throw new Error("package.json license must match repo-policy.json.");
@@ -164,8 +164,7 @@ requireText(japaneseReadme, "TurboWarp TM", "README.ja.md");
 requireText(englishPage, "TurboWarp TM", "docs/index.html");
 requireText(japanesePage, "TurboWarp TM", "docs/ja/index.html");
 
-const cdnUrl =
-  "https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-qr-display@0.5.0/dist/qr-display.js";
+const cdnUrl = `https://cdn.jsdelivr.net/npm/${manifest.name}@${manifest.version}/dist/qr-display.js`;
 requireText(readme, cdnUrl, "README.md");
 requireText(japaneseReadme, cdnUrl, "README.ja.md");
 
