@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-qr-display",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": {
     "name": "Hiroya Kubo",
     "email": "hiroya@cuc.ac.jp",
@@ -66,7 +66,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@kubohiroya/turbowarp-extension-manifest": "^0.5.0",
-    "@kubohiroya/vite-plugin-turbowarp-extension": "^0.10.0",
+    "@kubohiroya/vite-plugin-turbowarp-extension": "^0.11.0",
     "@types/node": "^24.13.3",
     "@types/qrcode": "1.5.6",
     "eslint": "^9.39.5",
@@ -75,7 +75,7 @@
     "typescript-eslint": "^8.66.0",
     "vite": "^8.2.2",
     "vitest": "^4.1.10",
-    "@kubohiroya/turbowarp-extension-data-editor": "^0.5.0"
+    "@kubohiroya/turbowarp-extension-data-editor": "^0.8.1"
   },
   "keywords": [
     "turbowarp",
