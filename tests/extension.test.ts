@@ -211,13 +211,29 @@ describe('QrDisplayExtension', () => {
     expect(stage.drawableSkins.get(DRAWABLE)).toBe(qrSkin);
   });
 
-  it('ends displays and listeners when the runtime is disposed', () => {
+  it('ends displays when the runtime is disposed and listeners only when the extension is', () => {
     const stage = createStage();
     const extension = new QrDisplayExtension(stage.runtime);
     extension.showQrCode({TEXT: 'hello', LEVEL: 'M'}, {target: stage.sprite});
     stage.emit('RUNTIME_DISPOSED');
     expect(stage.skins.size).toBe(0);
+    extension.dispose();
     for (const listeners of stage.listeners.values()) expect(listeners.size).toBe(0);
+  });
+
+  // Every project load disposes the runtime but keeps the extension loaded for the next project.
+  it.each([
+    ['PROJECT_STOP_ALL', []],
+    ['targetWasRemoved', ['sprite']]
+  ])('still ends a QR on %s in the next project', (event, args) => {
+    const stage = createStage();
+    const extension = new QrDisplayExtension(stage.runtime);
+    stage.emit('RUNTIME_DISPOSED');
+    stage.emit('PROJECT_LOADED');
+    extension.showQrCode({TEXT: 'hello', LEVEL: 'M'}, {target: stage.sprite});
+    expect(stage.skins.size).toBe(1);
+    stage.emit(event, ...args.map(() => stage.sprite));
+    expect(stage.skins.size).toBe(0);
   });
 
   it('reports why a show failed and clears it on success', () => {

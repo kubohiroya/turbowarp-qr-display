@@ -53,8 +53,11 @@ export class QrDisplayExtension implements TurboWarpExtension {
 
   /** The stop sign and the green flag both stop all, which ends every display. */
   private readonly stopListener = (): void => this.display.hideAll();
-  /** Project loads dispose the runtime too; the fixed editors register again for the next project. */
-  private readonly disposeListener = (): void => this.releaseRuntime();
+  /**
+   * Project loads dispose the runtime too, but the runtime object and this extension stay for the
+   * next project: only its displays end here, the listeners stay until `dispose()`.
+   */
+  private readonly disposeListener = (): void => this.display.hideAll();
   private readonly targetRemovedListener = (target: unknown): void => {
     if (typeof target === 'object' && target !== null) this.display.hide(target as TurboWarpTarget);
   };
@@ -178,10 +181,6 @@ export class QrDisplayExtension implements TurboWarpExtension {
 
   public dispose(): void {
     this.fixedEditors.dispose();
-    this.releaseRuntime();
-  }
-
-  private releaseRuntime(): void {
     this.display.hideAll();
     this.runtime.off?.('PROJECT_STOP_ALL', this.stopListener);
     this.runtime.off?.('PROJECT_LOADED', this.stopListener);
