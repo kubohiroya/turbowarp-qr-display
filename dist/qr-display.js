@@ -2974,7 +2974,7 @@ var QrDisplayExtension = class {
 		this.lastError = "";
 		this.sides = /* @__PURE__ */ new WeakMap();
 		this.stopListener = () => this.display.hideAll();
-		this.disposeListener = () => this.releaseRuntime();
+		this.disposeListener = () => this.display.hideAll();
 		this.targetRemovedListener = (target) => {
 			if (typeof target === "object" && target !== null) this.display.hide(target);
 		};
@@ -3056,9 +3056,6 @@ var QrDisplayExtension = class {
 	}
 	dispose() {
 		this.fixedEditors.dispose();
-		this.releaseRuntime();
-	}
-	releaseRuntime() {
 		this.display.hideAll();
 		this.runtime.off?.("PROJECT_STOP_ALL", this.stopListener);
 		this.runtime.off?.("PROJECT_LOADED", this.stopListener);
