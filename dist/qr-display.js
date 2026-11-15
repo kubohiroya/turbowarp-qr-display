@@ -232,29 +232,56 @@ var fixedInputEditors = [{
 		"H"
 	]), binding("showQrCodeWithin", "SIZE")]
 }];
-/** Register only currently declared opcodes; release obsolete feature-flag scopes. */
+/**
+* Register only currently declared opcodes; release obsolete feature-flag scopes.
+*
+* Every project load disposes the runtime, which releases the registrations, but the extension
+* stays loaded for the next project: the same opcodes are registered again once that project has
+* loaded. Only `dispose()` is final.
+*/
 function fixedInputRegistration(scratch) {
 	const host = typeof scratch === "object" && scratch !== null ? scratch : {};
 	let active;
 	let activeOpcodes = "";
+	let lastOpcodes;
 	const removers = [];
 	let disposed = false;
-	const dispose = () => {
-		host.vm?.runtime?.off?.("RUNTIME_DISPOSED", shutdown);
+	let released = false;
+	let listening = false;
+	const release = () => {
 		for (const remove of removers.splice(0).reverse()) remove();
 		active = void 0;
 		activeOpcodes = "";
 	};
+	const runtimeDisposed = () => {
+		release();
+		released = true;
+	};
+	const projectLoaded = () => {
+		if (!released || lastOpcodes === void 0) return;
+		released = false;
+		try {
+			registration.ensure(lastOpcodes);
+		} catch {}
+	};
 	const shutdown = () => {
 		disposed = true;
-		dispose();
+		released = false;
+		if (listening) {
+			host.vm?.runtime?.off?.("RUNTIME_DISPOSED", runtimeDisposed);
+			host.vm?.runtime?.off?.("PROJECT_LOADED", projectLoaded);
+			listening = false;
+		}
+		release();
 	};
-	return {
+	const registration = {
 		ensure(opcodes) {
 			const api = host.gui?.blockEditors;
 			const signature = [...new Set(opcodes)].sort().join("\0");
 			if (disposed || api === active && signature === activeOpcodes) return;
-			dispose();
+			release();
+			released = false;
+			lastOpcodes = [...opcodes];
 			if (api?.apiVersion !== 1 || typeof api.registerFixedInputEditor !== "function") return;
 			try {
 				for (const definition of fixedInputEditors) if (definition.opcodes.every((opcode) => opcodes.includes(opcode))) {
@@ -264,14 +291,19 @@ function fixedInputRegistration(scratch) {
 				}
 				active = api;
 				activeOpcodes = signature;
-				host.vm?.runtime?.on?.("RUNTIME_DISPOSED", shutdown);
+				if (!listening) {
+					host.vm?.runtime?.on?.("RUNTIME_DISPOSED", runtimeDisposed);
+					host.vm?.runtime?.on?.("PROJECT_LOADED", projectLoaded);
+					listening = true;
+				}
 			} catch (error) {
-				dispose();
+				release();
 				throw error;
 			}
 		},
 		dispose: shutdown
 	};
+	return registration;
 }
 var block_definitions_default = {
 	extensionName: "QR Display",
@@ -2942,7 +2974,7 @@ var QrDisplayExtension = class {
 		this.lastError = "";
 		this.sides = /* @__PURE__ */ new WeakMap();
 		this.stopListener = () => this.display.hideAll();
-		this.disposeListener = () => this.dispose();
+		this.disposeListener = () => this.releaseRuntime();
 		this.targetRemovedListener = (target) => {
 			if (typeof target === "object" && target !== null) this.display.hide(target);
 		};
@@ -3024,6 +3056,9 @@ var QrDisplayExtension = class {
 	}
 	dispose() {
 		this.fixedEditors.dispose();
+		this.releaseRuntime();
+	}
+	releaseRuntime() {
 		this.display.hideAll();
 		this.runtime.off?.("PROJECT_STOP_ALL", this.stopListener);
 		this.runtime.off?.("PROJECT_LOADED", this.stopListener);
