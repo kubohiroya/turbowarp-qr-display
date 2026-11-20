@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-qr-display",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": {
     "name": "Hiroya Kubo",
     "email": "hiroya@cuc.ac.jp",
@@ -90,5 +90,11 @@
     "revision": "50d9b646fbc447dee83bd78421fdb06ecacf80ae",
     "revisionRole": "base-commit",
     "sourceState": "local-release-overlay"
+  },
+  "turbowarpExtension": {
+    "resourceDeclaration": {
+      "schemaVersion": 1,
+      "resources": []
+    }
   }
 }
