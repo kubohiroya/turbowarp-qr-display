@@ -6,7 +6,7 @@
 
 TurboWarp QR Displayは、任意の文字列をQRコードにしてスプライトに表示するTurboWarp拡張です。QRコードはスプライトのコスチュームを変更せずに置き換えて表示し、隠したとき・プロジェクトを止めたとき・スプライトを削除したときに元のコスチュームへ戻ります。表示内容はプロジェクトに保存されません。
 
-QRによる受け渡しの「表示する側」です。読み取る側は、別の端末のカメラと`@kubohiroya/turbowarp-jsqr`などで行います。
+QRによる受け渡しの「表示する側」です。読み取る側は、別の端末のカメラと`@kubohiroya/turbowarp-zxing`などで行います。
 
 **[English guide](https://kubohiroya.github.io/turbowarp-qr-display/)** ·
 **[日本語ガイド](https://kubohiroya.github.io/turbowarp-qr-display/ja/)**

@@ -10,7 +10,7 @@ when the QR code is hidden, the project stops, or the sprite is removed. Nothing
 of the display is saved into the project.
 
 It is the display half of a QR round trip: another device reads the code with a
-camera, for example with `@kubohiroya/turbowarp-jsqr`.
+camera, for example with `@kubohiroya/turbowarp-zxing`.
 
 **[Open the user guide](https://kubohiroya.github.io/turbowarp-qr-display/)** ·
 **[日本語ガイド](https://kubohiroya.github.io/turbowarp-qr-display/ja/)**
